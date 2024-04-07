@@ -1,10 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // Configuring form fields to be stored and sended
+    const email = {
+        email: '',
+        asunto: '',
+        mensaje: ''
+    }
+
     // Select user interface elements
     const inputEmail = document.querySelector('#email');
     const inputAsunto = document.querySelector('#asunto');
     const inputMensaje = document.querySelector('#mensaje');
     const formulario = document.querySelector('#formulario');
+    const btnSubmit = document.querySelector('#formulario button[type="submit"]'); // specific button
+    const btnReset = document.querySelector('#formulario button[type="reset"]');
+    const spinner = document.querySelector('#spinner');
 
     // Code testing
     // console.log(inputEmail, inputAsunto, inputMensaje);
@@ -15,6 +25,44 @@ document.addEventListener('DOMContentLoaded', function () {
     inputEmail.addEventListener('blur', validar);
     inputAsunto.addEventListener('blur', validar);
     inputMensaje.addEventListener('blur', validar);
+    // (It can be 'input' instead of 'blur', for a real-time experience)
+
+    formulario.addEventListener('submit', enviarEmail);
+
+    // Event for reset button. Note that it establishes a function as a seconde parameter,
+    // instead of calling it from an outer declaration
+    btnReset.addEventListener('click', function(event) {
+        event.preventDefault(); // It's default action is a GET HTTPS request
+        // On a button, adding a preventDefault can help to change it's function
+
+        resetFormulario();
+    });
+
+    function enviarEmail(event) {
+        event.preventDefault();
+
+        spinner.classList.add('flex'); // flexbox to aling-center on screen
+        spinner.classList.remove('hidden');
+
+        setTimeout(() => {
+            spinner.classList.remove('flex');
+            spinner.classList.add('hidden');
+
+            // The form input parameters reset after the 3000ms timeout ends
+            resetFormulario();
+
+            // Alert
+            const alertaExito = document.createElement('P');
+            alertaExito.classList.add('bg-green-500', 'text-white', 'p-2', 'text-center',
+            'rounded-lg', 'mt-10', 'font-bold', 'text-sm', 'uppercase');
+            alertaExito.textContent = 'Mensaje enviado correctamente'
+
+            formulario.appendChild(alertaExito);
+                setTimeout(() => {
+                    alertaExito.remove();
+                }, 3000);
+        }, 3000);            
+    };
 
     // callback
     function validar(event) {
@@ -26,17 +74,27 @@ document.addEventListener('DOMContentLoaded', function () {
         if(event.target.value.trim() === '') {
             // 
             mostrarAlerta(`El campo ${event.target.id} es obligatorio`, event.target.parentElement);
+            email[event.target.name] = '';
+            comprobarEmail();
             return;
             // return stops the code execution
         };
 
         if (event.target.id === 'email' && !validarEmail(event.target.value)) {
             mostrarAlerta('El email no es válido', event.target.parentElement);
+            email[event.target.name] = '';
+            comprobarEmail();
             return;
         }
 
         // if mostrarAlerta() doesn't execute, then limpiarAlerta acts, clearing the alert message
         limpiarAlerta(event.target.parentElement);
+
+        // Assigning values
+        email[event.target.name] = event.target.value.trim().toLowerCase();
+        // console.log(email); // Checking code
+
+        comprobarEmail();
     };
 
     function mostrarAlerta(mensaje, referencia) {
@@ -84,6 +142,27 @@ document.addEventListener('DOMContentLoaded', function () {
         // It is key to return the variable value (true/false) when doing the .test method
 
         // The .test method searches for a match between a regular expression and a specified string
-    }
+    };
 
+    function comprobarEmail() {
+        // Validating input in fields
+        if ( Object.values(email).includes('') ) {
+            btnSubmit.classList.add('opacity-50');
+             btnSubmit.disabled = true;
+        } else {
+            // Removing the "disabled" attribute, and the "opacity" style
+             btnSubmit.classList.remove('opacity-50');
+             btnSubmit.disabled = false;
+        }
+    };
+
+    function resetFormulario() {
+        // Restarting object after sending
+        email.email = '';
+        email.asunto = '';
+        email.mensaje = '';
+
+        formulario.reset();
+        comprobarEmail();
+    };
 });
