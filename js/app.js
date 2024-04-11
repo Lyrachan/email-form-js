@@ -4,9 +4,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const email = {
         email: '',
         asunto: '',
-        mensaje: ''
+        mensaje: '',
+        correoadicional: ''
     }
 
+        // Adding a new input section
+    // Input label
+    const inputOpcionalTexto = document.createElement('label');
+    inputOpcionalTexto.classList.add('font-regular', 'font-medium');
+    inputOpcionalTexto.setAttribute('for', 'destinatario-adicional');
+    inputOpcionalTexto.textContent = 'Destinatario adicional (opcional)';
+
+    //Input field
+    const inputOpcionalCampo = document.createElement('textarea');
+    inputOpcionalCampo.setAttribute('id', 'destinatario-adicional');
+    inputOpcionalCampo.setAttribute('placeholder', "Email destino, ej: mk@empresa2.com");
+    inputOpcionalCampo.setAttribute('type', 'email');
+    inputOpcionalCampo.setAttribute('name', 'correoadicional');
+    inputOpcionalCampo.classList.add('border', 'border-gray-300', 'px-3', 'py-2', 'rounded-lg', 'h-36');
+
+    // Creating div
+    const divInputOpcional = document.createElement('div');
+    divInputOpcional.classList.add('flex', 'flex-col', 'space-y-2');
+    divInputOpcional.appendChild(inputOpcionalTexto);
+    divInputOpcional.appendChild(inputOpcionalCampo);
+
+    
+    
     // Select user interface elements
     const inputEmail = document.querySelector('#email');
     const inputAsunto = document.querySelector('#asunto');
@@ -15,6 +39,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnSubmit = document.querySelector('#formulario button[type="submit"]'); // specific button
     const btnReset = document.querySelector('#formulario button[type="reset"]');
     const spinner = document.querySelector('#spinner');
+    // Inserting HTML div element at the end of formulario
+    // It's important to add it to the DOM before trying to get the element
+    formulario.insertBefore(divInputOpcional, formulario.children[3]);
+    const inputCorreoOpcional = document.querySelector('#destinatario-adicional');
+
+    // console.log(inputCorreoOpcional);
 
     // Code testing
     // console.log(inputEmail, inputAsunto, inputMensaje);
@@ -25,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     inputEmail.addEventListener('blur', validar);
     inputAsunto.addEventListener('blur', validar);
     inputMensaje.addEventListener('blur', validar);
+    inputCorreoOpcional.addEventListener('blur', validar);
     // (It can be 'input' instead of 'blur', for a real-time experience)
 
     formulario.addEventListener('submit', enviarEmail);
@@ -38,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         resetFormulario();
     });
 
+    // Send Email button features
     function enviarEmail(event) {
         event.preventDefault();
 
@@ -55,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const alertaExito = document.createElement('P');
             alertaExito.classList.add('bg-green-500', 'text-white', 'p-2', 'text-center',
             'rounded-lg', 'mt-10', 'font-bold', 'text-sm', 'uppercase');
-            alertaExito.textContent = 'Mensaje enviado correctamente'
+            alertaExito.textContent = 'Mensaje enviado correctamente';
 
             formulario.appendChild(alertaExito);
                 setTimeout(() => {
@@ -166,3 +198,5 @@ document.addEventListener('DOMContentLoaded', function () {
         comprobarEmail();
     };
 });
+
+// Desafío opcional: Añadir un campo opcional (email de destinatario adicional), con validaciones en input. Máx 20 min
